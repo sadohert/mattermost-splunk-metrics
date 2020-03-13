@@ -6,4 +6,4 @@ datasources:
     url: http://docker.for.mac.localhost:9090
     isDefault: true
     editable: true
-
+    access: direct
