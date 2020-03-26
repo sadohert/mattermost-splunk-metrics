@@ -42,8 +42,9 @@
       <single>
         <title>Number of messages / min</title>
         <search>
-          <query>| mstats rate(mattermost_post_total) WHERE index=mmmetrics span=60s 
-| stats sum(rate(mattermost_post_total))</query>
+          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND index="mmmetrics" span=10s
+| timechart rate(_value) AS Avg span=10s
+| fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -56,8 +57,9 @@
       <single>
         <title>Number of API errors / min</title>
         <search>
-          <query>| mstats rate(mattermost_http_errors_total) WHERE index=mmmetrics AND $hosts$ span=60s 
-| stats sum(rate(mattermost_http_errors_total))</query>
+          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_http_errors_total" AND index="mmmetrics" span=10s BY host
+| timechart rate(_value) span=10s agg=max limit=50 useother=false BY host
+| fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -70,7 +72,9 @@
       <single>
         <title>Number of connected devices</title>
         <search>
-          <query>| mstats count where index=mmmetrics metric_name=mattermost_http_websockets_total AND $hosts$ </query>
+          <query>| mstats avg(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND index="mmmetrics" span=10s
+| timechart avg(_value) AS Avg span=10s
+| fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -83,12 +87,14 @@
       <single>
         <title>Number of master DB conns</title>
         <search>
-          <query>| mstats max(mattermost_db_master_connections_total) WHERE index=mmmetrics AND $hosts$ span=60s 
-| stats latest</query>
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND index="mmmetrics" span=10s BY host
+| timechart max(_value) span=10s agg=max limit=5 useother=false BY host
+| fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
         <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.size">small</option>
       </single>
@@ -105,6 +111,7 @@
           <latest>$time_tok1.latest$</latest>
         </search>
         <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.size">small</option>
       </single>
@@ -115,48 +122,10 @@
       <title>Number of Message Per Second</title>
       <chart>
         <search>
-          <query>| mstats rate(_value) as count WHERE index=mmmetrics AND metric_name=mattermost_post_total span=60s</query>
-          <earliest>$time_tok1.earliest$</earliest>
-          <latest>$time_tok1.latest$</latest>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.visibility">collapsed</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.abbreviation">none</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.abbreviation">none</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">area</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">none</option>
-        <option name="charting.layout.splitSeries">1</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">none</option>
-        <option name="charting.lineWidth">2</option>
-        <option name="trellis.enabled">0</option>
-        <option name="trellis.scales.shared">1</option>
-        <option name="trellis.size">medium</option>
-      </chart>
-    </panel>
-    <panel>
-      <title>Number of API Errors per Second</title>
-      <chart>
-        <search>
-          <query>| mstats rate(_value) as count WHERE index=mmmetrics AND metric_name=mattermost_http_errors_total AND $hosts$ span=60s</query>
+          <query>| mstats rate(_value) as count prestats=true WHERE index=mmmetrics AND metric_name=mattermost_post_total AND $hosts$ span=60s  BY host
+| timechart rate(_value) as count span=60s BY host
+| addtotals
+</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -186,7 +155,50 @@
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Number of API Errors per Second</title>
+      <chart>
+        <search>
+          <query>| mstats rate(_value) as count prestats=true WHERE metric_name="mattermost_http_errors_total" AND index="mmmetrics" AND $hosts$ span=60s BY host
+| timechart rate(_value) as count span=60s BY host
+| addtotals</query>
+          <earliest>$time_tok1.earliest$</earliest>
+          <latest>$time_tok1.latest$</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
@@ -199,9 +211,9 @@
       <title>Mean API Request Time (in milliseconds)</title>
       <chart>
         <search>
-          <query>| mstats sum(mattermost_http_request_duration_seconds_sum) as seconds_sum sum(mattermost_http_request_duration_seconds_count) as seconds_count WHERE index=mmmetrics AND $hosts$ span=30s 
+          <query>| mstats sum(mattermost_http_request_duration_seconds_sum) as seconds_sum sum(mattermost_http_request_duration_seconds_count) as seconds_count WHERE index=mmmetrics AND $hosts$ span=60s BY host
 | eval rate_http = 1000* seconds_sum / seconds_count
-|  fields _time rate_http</query>
+| fields _time, rate_http</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -228,12 +240,13 @@
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
         <option name="charting.drilldown">none</option>
-        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries">1</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
@@ -243,7 +256,9 @@
       <title>Number of Connections to Master Database</title>
       <chart>
         <search>
-          <query>| mstats max(mattermost_db_master_connections_total) as count WHERE index=mmmetrics AND $hosts$ span=60s</query>
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND index="mmmetrics" AND $hosts$ span=60s BY host
+| timechart max(_value) span=60s agg=max BY host
+| addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -273,7 +288,7 @@
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
@@ -420,7 +435,9 @@
       <title>Number of Go Routines</title>
       <chart>
         <search>
-          <query>| mstats sum(go_goroutines) as count WHERE index=mmmetrics AND $hosts$ span=5s</query>
+          <query>| mstats max(go_goroutines) span=60s prestats=true WHERE index=mmmetrics AND $hosts$ by host
+| timechart max(go_goroutines) span=60s
+| addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -451,7 +468,7 @@
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>

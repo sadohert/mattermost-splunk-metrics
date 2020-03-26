@@ -48,3 +48,15 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+
+  mm-splunk-app:
+    image: splunk/splunk:7.2.9
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=mypassword
+      - SPLUNK_APPS_URL=https://github.com/lukemonahan/splunk_modinput_prometheus/releases/download/Release_0.6.0/modinput_prometheus.tar.gz
+    volumes:
+      - ./mm_splunk/mattermost-splunk:/opt/splunk/etc/apps/mattermost-splunk:rw
+    ports:
+      - "8000:8000"
+
