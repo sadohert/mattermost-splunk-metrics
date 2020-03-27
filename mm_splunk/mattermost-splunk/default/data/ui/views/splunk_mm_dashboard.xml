@@ -13,7 +13,7 @@
       <fieldForLabel>values(host)</fieldForLabel>
       <fieldForValue>values(host)</fieldForValue>
       <search>
-        <query>| mcatalog values(host) WHERE index=mmmetrics</query>
+        <query>| mcatalog values(host) WHERE `mattermost_metrics` sourcetype=prometheus:metric</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -42,7 +42,7 @@
       <single>
         <title>Number of messages / min</title>
         <search>
-          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND index="mmmetrics" span=10s
+          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=10s
 | timechart rate(_value) AS Avg span=10s
 | fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -57,7 +57,7 @@
       <single>
         <title>Number of API errors / min</title>
         <search>
-          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_http_errors_total" AND index="mmmetrics" span=10s BY host
+          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_http_errors_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=10s BY host
 | timechart rate(_value) span=10s agg=max limit=50 useother=false BY host
 | fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -72,7 +72,7 @@
       <single>
         <title>Number of connected devices</title>
         <search>
-          <query>| mstats avg(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND index="mmmetrics" span=10s
+          <query>| mstats avg(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=10s
 | timechart avg(_value) AS Avg span=10s
 | fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -87,7 +87,7 @@
       <single>
         <title>Number of master DB conns</title>
         <search>
-          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND index="mmmetrics" span=10s BY host
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=10s BY host
 | timechart max(_value) span=10s agg=max limit=5 useother=false BY host
 | fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -103,7 +103,7 @@
       <single>
         <title>Server memory usage (in MB)</title>
         <search>
-          <query>| mstats max(go_memstats_alloc_bytes) WHERE index=mmmetrics span=15s 
+          <query>| mstats max(go_memstats_alloc_bytes) WHERE `mattermost_metrics` sourcetype=prometheus:metric span=15s 
 | stats latest(max(go_memstats_alloc_bytes)) as server_memory
 | eval server_memory_mb = server_memory/1024/1024
 | fields server_memory_mb</query>
@@ -122,7 +122,7 @@
       <title>Number of Message Per Second</title>
       <chart>
         <search>
-          <query>| mstats rate(_value) as count prestats=true WHERE index=mmmetrics AND metric_name=mattermost_post_total AND $hosts$ span=60s  BY host
+          <query>| mstats rate(_value) as count prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND metric_name=mattermost_post_total AND $hosts$ span=60s  BY host
 | timechart rate(_value) as count span=60s BY host
 | addtotals
 </query>
@@ -166,7 +166,7 @@
       <title>Number of API Errors per Second</title>
       <chart>
         <search>
-          <query>| mstats rate(_value) as count prestats=true WHERE metric_name="mattermost_http_errors_total" AND index="mmmetrics" AND $hosts$ span=60s BY host
+          <query>| mstats rate(_value) as count prestats=true WHERE metric_name="mattermost_http_errors_total" AND `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s BY host
 | timechart rate(_value) as count span=60s BY host
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -211,7 +211,7 @@
       <title>Mean API Request Time (in milliseconds)</title>
       <chart>
         <search>
-          <query>| mstats sum(mattermost_http_request_duration_seconds_sum) as seconds_sum sum(mattermost_http_request_duration_seconds_count) as seconds_count WHERE index=mmmetrics AND $hosts$ span=60s BY host
+          <query>| mstats sum(mattermost_http_request_duration_seconds_sum) as seconds_sum sum(mattermost_http_request_duration_seconds_count) as seconds_count WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s BY host
 | eval rate_http = 1000* seconds_sum / seconds_count
 | fields _time, rate_http</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -256,7 +256,7 @@
       <title>Number of Connections to Master Database</title>
       <chart>
         <search>
-          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND index="mmmetrics" AND $hosts$ span=60s BY host
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s BY host
 | timechart max(_value) span=60s agg=max BY host
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -301,7 +301,7 @@
       <title>Mean Cluster Request Time (in milliseconds)</title>
       <chart>
         <search>
-          <query>| mstats rate(mattermost_cluster_cluster_request_duration_seconds_sum) as seconds_sum WHERE index=mmmetrics AND $hosts$ span=60s 
+          <query>| mstats rate(mattermost_cluster_cluster_request_duration_seconds_sum) as seconds_sum WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s 
 | eval milliseconds_sum = 1000* seconds_sum
 |  fields _time milliseconds_sum</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -346,7 +346,7 @@
       <title>Number of Connections to Read Replica Databases</title>
       <chart>
         <search>
-          <query>| mstats avg(mattermost_db_read_replica_connections_total) as count WHERE index=mmmetrics AND $hosts$ span=30s</query>
+          <query>| mstats avg(mattermost_db_read_replica_connections_total) as count WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=30s</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -390,7 +390,7 @@
       <title>*BAD* CPU Utilization Rate (%)</title>
       <chart>
         <search>
-          <query>| mstats rate(mattermost_process_cpu_seconds_total) as cpu_seconds WHERE index=mmmetrics AND $hosts$ span=30s 
+          <query>| mstats rate(mattermost_process_cpu_seconds_total) as cpu_seconds WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=30s 
 | eval cpu_rate = 100* cpu_seconds
 |  fields _time cpu_rate</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -435,7 +435,7 @@
       <title>Number of Go Routines</title>
       <chart>
         <search>
-          <query>| mstats max(go_goroutines) span=60s prestats=true WHERE index=mmmetrics AND $hosts$ by host
+          <query>| mstats max(go_goroutines) span=60s prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ by host
 | timechart max(go_goroutines) span=60s
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>

@@ -59,4 +59,3 @@ services:
       - ./mm_splunk/mattermost-splunk:/opt/splunk/etc/apps/mattermost-splunk:rw
     ports:
       - "8000:8000"
-
