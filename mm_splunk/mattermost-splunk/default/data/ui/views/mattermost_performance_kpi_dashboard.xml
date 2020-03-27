@@ -1,5 +1,5 @@
 <form theme="dark">
-  <label>Mattermost Performance KPI Metrics</label>
+  <label>Performance KPI Metrics</label>
   <fieldset submitButton="false">
     <input type="time" token="time_tok1">
       <label></label>
