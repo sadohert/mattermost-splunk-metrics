@@ -5,3 +5,13 @@ modtime = 1585219658.351932000
 [app/launcher]
 version = 7.2.9.1
 modtime = 1585219658.353146000
+
+[inputs/prometheus%3A%2F%2Fmm_host1]
+owner = admin
+version = 7.2.9.1
+modtime = 1585307162.492792000
+
+[indexes/mm_metrics]
+owner = admin
+version = 7.2.9.1
+modtime = 1585306714.141439000

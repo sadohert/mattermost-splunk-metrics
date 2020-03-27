@@ -33,3 +33,9 @@ export = system
 [viewstates]
 access = read : [ * ], write : [ * ]
 export = system
+
+[macros/mattermost_metrics]
+export = none
+owner = admin
+version = 7.2.9.1
+modtime = 1585309211.707482000
