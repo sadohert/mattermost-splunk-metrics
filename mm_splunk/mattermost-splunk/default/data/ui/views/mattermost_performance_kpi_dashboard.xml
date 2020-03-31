@@ -8,13 +8,13 @@
         <latest>now</latest>
       </default>
     </input>
-    <input type="multiselect" token="hosts">
+    <input type="multiselect" token="hosts" searchWhenChanged="true">
       <label>Select Hosts</label>
       <fieldForLabel>values(host)</fieldForLabel>
       <fieldForValue>values(host)</fieldForValue>
       <search>
-        <query>| mcatalog values(host) WHERE `mattermost_metrics` sourcetype=prometheus:metric</query>
-        <earliest>-24h@h</earliest>
+        <query>| mcatalog values(host) WHERE `mattermost_metrics` sourcetype=prometheus:metric | mvexpand values(host)</query>
+        <earliest>-7d@w0</earliest>
         <latest>now</latest>
       </search>
       <prefix>(</prefix>
