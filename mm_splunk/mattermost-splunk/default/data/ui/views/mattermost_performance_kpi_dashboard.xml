@@ -22,21 +22,21 @@
       <valueSuffix>"</valueSuffix>
       <delimiter> OR </delimiter>
       <suffix>)</suffix>
+      <choice value="*">all</choice>
     </input>
   </fieldset>
   <row>
     <panel>
-      <single>
-        <title>Max CPU utilization rate (%) *PH*</title>
+      <chart>
         <search>
-          <query/>
+          <query>| mstats rate(_value) WHERE metric_name="mattermost_process_cpu_seconds_total" AND `mattermost_metrics` span=60s</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
-        <option name="drilldown">none</option>
-        <option name="trellis.enabled">0</option>
-        <option name="trellis.size">small</option>
-      </single>
+        <option name="charting.chart">radialGauge</option>
+        <option name="charting.chart.rangeValues">[0,30,70,100]</option>
+        <option name="charting.gaugeColors">["0x53a051","0xf8be34","0xdc4e41"]</option>
+      </chart>
     </panel>
     <panel>
       <single>
@@ -44,7 +44,8 @@
         <search>
           <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=10s
 | timechart rate(_value) AS Avg span=10s
-| fields - _span*</query>
+| fields - _span*
+</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -256,8 +257,9 @@
       <title>Number of Connections to Master Database</title>
       <chart>
         <search>
-          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s BY host
-| timechart max(_value) span=60s agg=max BY host
+          <query>| mstats avg(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=60s BY host
+| timechart avg(_value) span=60s agg=avg useother=false BY host
+| fields - _span*
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
