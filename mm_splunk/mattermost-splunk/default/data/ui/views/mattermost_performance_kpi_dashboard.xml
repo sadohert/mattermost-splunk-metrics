@@ -47,8 +47,8 @@
       <single>
         <title>Number of messages / min</title>
         <search>
-          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=30s
-| timechart rate(_value) AS Avg span=30s
+          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=60s
+| timechart rate(_value) AS Avg span=60s
 | fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
@@ -82,8 +82,8 @@
       <single>
         <title>Number of connected devices</title>
         <search>
-          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=30s BY host
-| timechart max(_value) AS Avg span=30s
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=60s BY host
+| timechart max(_value) AS Avg span=60s By host
 | addtotals
 | fields - Total</query>
           <earliest>$time_tok1.earliest$</earliest>
