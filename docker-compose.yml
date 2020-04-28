@@ -50,7 +50,7 @@ services:
       org.label-schema.group: "monitoring"
 
   mm-splunk-app:
-    image: splunk/splunk:7.2.9
+    image: splunk/splunk:latest
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_PASSWORD=mypassword
