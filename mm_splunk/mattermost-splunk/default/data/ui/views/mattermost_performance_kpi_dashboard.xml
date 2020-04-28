@@ -47,14 +47,16 @@
       <single>
         <title>Number of messages / min</title>
         <search>
-          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=10s
-| timechart rate(_value) AS Avg span=10s
-| fields - _span*
-</query>
+          <query>| mstats rate(_value) prestats=true WHERE metric_name="mattermost_post_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=30s
+| timechart rate(_value) AS Avg span=30s
+| fields - _span*</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
         <option name="drilldown">none</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.size">small</option>
       </single>
@@ -69,6 +71,8 @@
           <latest>$time_tok1.latest$</latest>
         </search>
         <option name="drilldown">none</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.size">small</option>
@@ -78,8 +82,10 @@
       <single>
         <title>Number of connected devices</title>
         <search>
-          <query>| mstats sum(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=30s
-| timechart sum(_value) AS Avg span=30s</query>
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=30s BY host
+| timechart max(_value) AS Avg span=30s
+| addtotals
+| fields - Total</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -95,8 +101,10 @@
       <single>
         <title>Number of master DB conns</title>
         <search>
-          <query>| mstats sum(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=30s
-| timechart sum(_value) span=30s</query>
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric  span=60s BY host
+| timechart max(_value) span=60s By host
+| addtotals
+| fields - Total</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -105,6 +113,7 @@
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.size">small</option>
+        <option name="trendInterval">-1m</option>
       </single>
     </panel>
     <panel>
@@ -220,7 +229,7 @@
       <title>Mean API Request Time (in milliseconds)</title>
       <chart>
         <search>
-          <query>| mstats sum(mattermost_http_request_duration_seconds_sum) as seconds_sum sum(mattermost_http_request_duration_seconds_count) as seconds_count WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s BY host
+          <query>| mstats sum(mattermost_http_request_duration_seconds_sum) as seconds_sum sum(mattermost_http_request_duration_seconds_count) as seconds_count WHERE `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=15s BY host
 | eval rate_http = 1000* seconds_sum / seconds_count
 | fields _time, rate_http</query>
           <earliest>$time_tok1.earliest$</earliest>
@@ -265,9 +274,8 @@
       <title>Number of Connections to Master Database</title>
       <chart>
         <search>
-          <query>| mstats avg(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=60s BY host
-| timechart avg(_value) span=60s agg=avg useother=false BY host
-| fields - _span*
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_db_master_connections_total" AND `mattermost_metrics` sourcetype=prometheus:metric  span=15s BY host
+| timechart max(_value) span=15s agg=max useother=false BY host
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
@@ -300,6 +308,7 @@
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
