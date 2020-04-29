@@ -118,11 +118,11 @@
   </row>
   <row>
     <panel>
-      <title>FIX THIS Number of Connected Devices (WebSocket Connections)</title>
+      <title>Number of Connected Devices (WebSocket Connections)</title>
       <chart>
         <search>
-          <query>| mstats rate(_value) as count prestats=true WHERE metric_name="mattermost_http_errors_total" AND `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ span=60s BY host
-| timechart rate(_value) as count span=60s BY host
+          <query>| mstats max(_value) prestats=true WHERE metric_name="mattermost_http_websockets_total" AND `mattermost_metrics` sourcetype=prometheus:metric span=60s BY host
+| timechart max(_value) AS Avg span=60s By host
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
@@ -155,6 +155,7 @@
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
@@ -162,7 +163,7 @@
     </panel>
   </row>
   <row>
-      <panel>
+    <panel>
       <title>Number of Connections to Master Database</title>
       <chart>
         <search>
@@ -208,7 +209,7 @@
     </panel>
   </row>
   <row>
-      <panel>
+    <panel>
       <title>Number of Connections to Read Replica Databases</title>
       <chart>
         <search>
@@ -255,7 +256,7 @@
     </panel>
   </row>
   <row>
-      <panel>
+    <panel>
       <title>Number of Connections to Search Replica Databases</title>
       <chart>
         <search>
@@ -302,7 +303,7 @@
     </panel>
   </row>
   <row>
-      <panel>
+    <panel>
       <title>FIX THIS!!Number of Message Per Second by Type</title>
       <chart>
         <search>
@@ -348,14 +349,13 @@
     </panel>
   </row>
   <row>
-      <panel>
+    <panel>
       <title>FIX THIS!!Number of Broadcasts per Second</title>
       <chart>
         <search>
-          <query>| mstats rate(_value) as count prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND metric_name=mattermost_post_total AND $hosts$ span=60s  BY host
+          <query>| mstats rate(_value) as count prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND metric_name=mattermost_post_broadcasts_total AND $hosts$ span=60s  BY host
 | timechart rate(_value) as count span=60s BY host
-| addtotals
-</query>
+| addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -387,6 +387,7 @@
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
@@ -539,8 +540,8 @@
       <title>Number of Go Routines</title>
       <chart>
         <search>
-          <query>| mstats avg(_value) span=60s prestats=true WHERE metric_name=go_goroutines `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ by host
-| timechart avg(_value) span=60s BY host
+          <query>| mstats max(_value) span=60s prestats=true WHERE metric_name=go_goroutines `mattermost_metrics` sourcetype=prometheus:metric AND (host ="617d67c7fe56") by host
+| timechart max(_value) span=60s BY host
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
@@ -586,9 +587,10 @@
       <title>FIX THIS!!!Memory Usage (in MB)</title>
       <chart>
         <search>
-          <query>| mstats avg(_value) span=60s prestats=true WHERE metric_name=go_goroutines `mattermost_metrics` sourcetype=prometheus:metric AND $hosts$ by host
-| timechart avg(_value) span=60s BY host
-| addtotals</query>
+          <query>| mstats max(go_memstats_alloc_bytes) as memory WHERE `mattermost_metrics` sourcetype=prometheus:metric span=30s BY host
+| eval memory_mb=memory/1024/1024
+| fields _time, host, memory_mb
+| timechart max(memory_mb) by host</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -628,4 +630,4 @@
       </chart>
     </panel>
   </row>
-</form>
+</form>>
