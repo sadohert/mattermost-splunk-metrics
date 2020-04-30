@@ -304,13 +304,11 @@
   </row>
   <row>
     <panel>
-      <title>FIX THIS!!Number of Message Per Second by Type</title>
+      <title>Number of Message Per Second by Type</title>
       <chart>
         <search>
-          <query>| mstats rate(_value) as count prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND metric_name=mattermost_post_total AND $hosts$ span=60s  BY host
-| timechart rate(_value) as count span=60s BY host
-| addtotals
-</query>
+          <query>| mstats rate(_value) as count prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND (metric_name=mattermost_post_total OR metric_name=mattermost_post_webhooks_total) span=60s BY metric_name
+| timechart rate(_value) as count span=60s BY metric_name</query>
           <earliest>$time_tok1.earliest$</earliest>
           <latest>$time_tok1.latest$</latest>
         </search>
@@ -342,6 +340,7 @@
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
@@ -350,7 +349,7 @@
   </row>
   <row>
     <panel>
-      <title>FIX THIS!!Number of Broadcasts per Second</title>
+      <title>Number of Broadcasts per Second</title>
       <chart>
         <search>
           <query>| mstats rate(_value) as count prestats=true WHERE `mattermost_metrics` sourcetype=prometheus:metric AND metric_name=mattermost_post_broadcasts_total AND $hosts$ span=60s  BY host
@@ -584,7 +583,7 @@
   </row>
   <row>
     <panel>
-      <title>FIX THIS!!!Memory Usage (in MB)</title>
+      <title>Memory Usage (in MB)</title>
       <chart>
         <search>
           <query>| mstats max(go_memstats_alloc_bytes) as memory WHERE `mattermost_metrics` sourcetype=prometheus:metric span=30s BY host
@@ -630,4 +629,4 @@
       </chart>
     </panel>
   </row>
-</form>>
+</form>
