@@ -539,7 +539,7 @@
       <title>Number of Go Routines</title>
       <chart>
         <search>
-          <query>| mstats max(_value) span=60s prestats=true WHERE metric_name=go_goroutines `mattermost_metrics` sourcetype=prometheus:metric AND (host ="617d67c7fe56") by host
+          <query>| mstats max(_value) span=60s prestats=true WHERE metric_name=go_goroutines `mattermost_metrics` sourcetype=prometheus:metric by host
 | timechart max(_value) span=60s BY host
 | addtotals</query>
           <earliest>$time_tok1.earliest$</earliest>
