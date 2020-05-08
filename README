@@ -3,7 +3,7 @@ Document
 * Build
 * Using Docker Test Setup
 * Installation
-Prerequisites - modinput_prometheus
+Prerequisites - modinput_prometheus plugin - https://github.com/lukemonahan/splunk_modinput_prometheus
 
 * Usage
 
