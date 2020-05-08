@@ -57,6 +57,6 @@ services:
       - SPLUNK_APPS_URL=https://github.com/lukemonahan/splunk_modinput_prometheus/releases/download/Release_0.6.0/modinput_prometheus.tar.gz
     restart: unless-stopped
     volumes:
-      - ./mm_splunk/mattermost-splunk:/opt/splunk/etc/apps/mattermost-splunk:rw
+      - ./mattermost-splunk-metrics:/opt/splunk/etc/apps/mattermost-splunk-metrics:rw
     ports:
       - "8000:8000"

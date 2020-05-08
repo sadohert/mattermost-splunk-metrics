@@ -15,3 +15,15 @@ modtime = 1585323350.164471000
 owner = admin
 version = 7.2.9.1
 modtime = 1585323435.659194000
+
+[views/mattermost_performance_kpi_dashboard]
+version = 8.0.2
+modtime = 1588070612.241227000
+
+[views/mattermost_performance_monitoring]
+version = 8.0.2
+modtime = 1588273321.106355000
+
+[views/mattermost_bonus_metrics]
+version = 8.0.2
+modtime = 1588843444.435382000
