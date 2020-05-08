@@ -2,4 +2,4 @@ venv
 dist
 local
 loadtestconfig*
-mm_splunk/mattermost-splunk/metadata/local.meta
+mattermost-splunk-metrics/metadata/local.meta

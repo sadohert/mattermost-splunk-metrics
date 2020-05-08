@@ -5,8 +5,7 @@ build_dir:
 
 package: build_dir
 	COPY_EXTENDED_ATTRIBUTES_DISABLE=true COPYFILE_DISABLE=true  tar czf ./dist/$(plugin_name).tar.gz --exclude '\.*' --exclude "$(plugin_name)/local" --exclude '$(plugin_name)/metadata/local.meta'  $(plugin_name)	
-	tar cvfz $(plugin_name).tar.gz $(plugin_name)
-
+l
 # To use the validate target, install a Python venv in this directory, and install splunk-appinspect within it
 # http://dev.splunk.com/view/appinspect/SP-CAAAFAW#installinvirtualenv
 validate: package
