@@ -1,4 +1,5 @@
 venv
+dist
 local
 loadtestconfig*
 mm_splunk/mattermost-splunk/metadata/local.meta
