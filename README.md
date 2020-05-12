@@ -52,7 +52,7 @@ When you access the Mattermost app you will see a dashboard in the horizontal na
 ## Contributing
 
 When directly comparing the Mattermost dashboards from Grafana to Splunk, there is much less resolution on the data, but I *think* the general trends match.  More testing is needed.
- This could be improved by
+
 
 ### Build
 Create a zipped tar file to for installation into Splunk using the provided `Makefile`:
@@ -61,8 +61,16 @@ $make package
 ```
 The tarfile will be located at `dist/mattermost-splunk-metrics.tar.gz`
 
+Verify the changes to the plugin conform to the [Splunk App Inspect](https://dev.splunk.com/enterprise/docs/releaseapps/appinspect/) rules.  NOTE:  This step requires a Python venv with `splunk-appinspect` installed within it
+
+http://dev.splunk.com/view/appinspect/SP-CAAAFAW#installinvirtualenv
+
+```
+$make validate
+```
+
 ### Using Docker Test Setup
-There is a docker-compose file that would allow you to spin up instances of:
+There is a docker-compose file that would allow you to deploy instances of:
  * Prometheus & Grafana - This is how the Splunk charts were compared to Grafana
  * Splunk - The plugin will be installed into the Splunk environment (latest docker image)
  * Changes through the UI get saved to the "local" directory structure (not "default"), which works for testing, but to contribute back any changes need to be copied back over from the directory `mattermost-splunk-metrics/local/data/ui/views` to `mattermost-splunk-metrics/default/data/ui/views`.
