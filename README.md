@@ -24,7 +24,7 @@ index = mm_metrics
 disabled = 0
 ```
 
-NOTE:  Splunk data inputs can be setup through the UI, but there is currently a bug in the `modinput_prometheus` plugin that prevents the desired [Metrics Index](https://docs.splunk.com/Documentation/Splunk/8.0.3/Metrics/GetStarted#Metrics_indexes) from being discoverable.
+NOTE:  Splunk data inputs can be setup through the UI, but there appears to be a bug in the `modinput_prometheus` plugin that prevents the desired [Metrics Index](https://docs.splunk.com/Documentation/Splunk/8.0.3/Metrics/GetStarted#Metrics_indexes) from being discoverable.
 
 
 ### Installation
@@ -45,6 +45,8 @@ iseval = 0
 This plugin is installed as a Splunk App at the same level as the built-in "Search & Reporting" app.  
 ![app](assets/mm_app.png)
 When you access the Mattermost app you will see a dashboard in the horizontal navigation bar.  The other 2 dashboards are available under the "Dashboards" tab.
+
+![homepage](assets/app-home-page.png)
 
 
 ## Contributing
