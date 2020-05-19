@@ -92,3 +92,4 @@ There is a docker-compose file that would allow you to deploy instances of:
  * Post alerts and dashboards to Mattermost channels
  * Add log correlation to the dashboards.
  * Can some of the search span periods be made into a parameter or macro so users can configure the period to match the way the prometheus data inputs are configured in Splunk.
+ * Add User/Community related queries (pointing at the database)
